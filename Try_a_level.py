@@ -1,9 +1,8 @@
 import random
 from Animation import anim, Trader_animation, living_armor_run_animation,ninja_run_animation,ninja_attack_animation
 from Items import identify_item,inventory
-from Level_prefabs import level1,level0,Travel
+from Level_prefabs import level1,level0,Level_signs,Possible_levels
 import pygame
-from Player import Block, camera_group
 from Animation import shine_animation,Item_column_animation,living_armor_run_animation,living_armor_idle_animation,wizzard_run_animation,wizzard_attack_animation
 
 scale = 4
@@ -73,9 +72,9 @@ def Top_collision(x,y,Px,Py,weight,height):
     else:return True
 
 
-def Draw_a_level(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,wasd,done,stage):
-    global level,transparent_spritesheet,level1,level0,Travel
-    level = Travel[int(stage)]
+def Draw_a_level(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,wasd,done,stage,current):
+    global level,transparent_spritesheet,level1,level0,Travel,Possible_levels,Level_signs
+    level = Possible_levels[Level_signs.index(current)]
     x = x+8*scale
     y = y+16*scale
     revealed = False
@@ -151,11 +150,30 @@ def Draw_a_level(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,wasd,done,s
                                 [64 * scale, 144 * scale, 32 * scale, 16 * scale])
                 if level[i][n] == "b":
                     screen.blit(sprite_sheet, (n * 16 * scale+delta_camx, i * 16 * scale+delta_camy), [16*scale, 16 * scale, 16 * scale, 16 * scale])
+                if level[i][n] == "8":
+                    # screen.blit(sprite_sheet, (n * 16 * scale + delta_camx, i * 16 * scale + delta_camy - 16 * scale),
+                    #             [48 * scale, 128*scale, 16 * scale, 32 * scale])
+                    screen.blit(sprite_sheet,(n*16*scale+delta_camx,i*16*scale+delta_camy),[16*scale,0,16*scale,16*scale])
+
+                    if y in range(i * 16 * scale + delta_camy - 32 * scale, i * 16 * scale + delta_camy) and x in range(
+                            n * 16 * scale + delta_camx, n * 16 * scale + delta_camx + 16 * scale):
+                        screen.blit(transparent_spritesheet,
+                                    (n * 16 * scale + delta_camx, i * 16 * scale + delta_camy - 16 * scale),
+                                    [48 * scale, 128*scale, 16 * scale, 32 * scale])
+                    else:
+                        screen.blit(sprite_sheet,
+                                    (n * 16 * scale + delta_camx, i * 16 * scale + delta_camy - 16 * scale),
+                                    [48 * scale, 128*scale, 16 * scale, 32 * scale])
+                if level[i][n] == '9':
+                    screen.blit(sprite_sheet,(n*16*scale+delta_camx,i*16*scale+delta_camy),[16*scale,0,16*scale,16*scale])
+
+                    screen.blit(sprite_sheet,(n * 16 * scale + delta_camx, i * 16 * scale + delta_camy - 16 * scale),[0,159*scale,16*scale,32*scale])
+
 
             if level[i][n] == '!':
                     pass
     return Ready
-def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entities):
+def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entities,current):
     global level,transparent_spritesheet
     # This function is responsible for determining collisions of various objects(as casual walls and movestones)
     x = x+8*scale
@@ -165,7 +183,7 @@ def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entitie
     for i in range(0,len(level)):
         for n in range(0,len(level[i])):
             if n*16*scale+delta_camx in range(-100,600) and i*16*scale+delta_camy in range(-100,600):
-                if level[i][n] == '5' or level[i][n] == 'v':
+                if level[i][n] == '5' or level[i][n] == 'v' or level[i][n] == '8':
                     wasd[0] =wasd[0] and  Bottom_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
                     wasd[1] = wasd[1] and Right_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
                     wasd[2] = wasd[2] and Top_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
@@ -227,6 +245,18 @@ def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entitie
                 #                 [16 * scale, 0, 16 * scale, 16 * scale])
                 #     screen.blit(sprite_sheet,(n*16*scale+delta_camx,i*16*scale+delta_camy-16*scale),[16*scale,96*scale,16*scale,32*scale])
     return wasd
+def Set_start_pos(lvl,start_pos,Travel):
+    global level
+    level = Travel[int(lvl)]
+    result = start_pos
+    for i in range(0,len(level)):
+        print(level[i], lvl)
+
+        for n in range(0,len(level[i])):
+            if level[i][n] == "q":
+                print(n*16*scale,i*16*scale)
+                result = n*16*scale,i*16*scale
+    return result
 def fill_entities(lvl,entities):
     # This func is responsible for spawning entities every time player enters a new level
     if lvl == 1:
@@ -245,6 +275,18 @@ def fill_entities(lvl,entities):
         entities.append(["zombie", 100, 900, 2, 0, 0, False, 300, 300, 100])
         entities.append(["living_armor", 700, 700, 2, 0, 0, False, 300,300,100])
     if lvl == 3:
+        entities.append(["zombie",100,100,2,0,0,False,300,300,100])
+        entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["zombie", 900, 900, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["zombie", 100, 900, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["living_armor", 700, 700, 2, 0, 0, False, 300,300,100])
+    if lvl == 4:
+        entities.append(["zombie",100,100,2,0,0,False,300,300,100])
+        entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["zombie", 900, 900, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["zombie", 100, 900, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["living_armor", 700, 700, 2, 0, 0, False, 300,300,100])
+    if lvl == 5:
         entities.append(["zombie",100,100,2,0,0,False,300,300,100])
         entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100])
         entities.append(["zombie", 900, 900, 2, 0, 0, False, 300, 300, 100])
@@ -304,8 +346,7 @@ def meele(Px,Py,Tarx,Tary,speed):
     return [delta_x,delta_y]
 
 def entities_itself(entities,x,y,i,k_e,projectiles,step):
-    # this func is responsible for all the calculations about entities
-    # all this happens on the host.
+    # this func is responsible for all the c
     cur = entities[i]
     type = cur[0]
     Px,Py = cur[1],cur[2]
@@ -318,6 +359,7 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
     if x in range(Px-1000,Px+1000) and y in range(Py-1000,Py+1000):
         target = [x, y]
 
+    # Px,Py =0,0
     if hp >0:
         if type == "wizzard":
             if len(projectiles) < 1 and (Px, Py) != (x, y):
@@ -358,8 +400,6 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
     print("agressive:",aggresive)
     return delta_Px,delta_Py,best,aggresive,target[0],target[1],projectiles,round(hp,1)
 def Loot_chest(Px,Py,x,y,condition,k_e,name):
-    # Loot chest logic ...
-    # this func detects the interactions with chest
     global scale,sprite_sheet2,inventory
     print(name,condition)
     if condition == "closed":
@@ -377,7 +417,7 @@ def Loot_chest(Px,Py,x,y,condition,k_e,name):
 
     return condition
 def Chest_onclient(Px, Py,x,y, screen, sprite_sheet,condition,k_e,name,timer,last_update):
-        # Just chest draw logic
+        print(condition)
         if condition == "closed":
             screen.blit(sprite_sheet,(Px,Py),[16 * scale, 128 * scale, 16 * scale, 16 * scale])
             if x in range(Px - 200, Px + 200) and y in range(Py - 200, Py + 200):
@@ -395,11 +435,8 @@ def Chest_onclient(Px, Py,x,y, screen, sprite_sheet,condition,k_e,name,timer,las
 
 def entities_onclient(entities,screen,scale,sprite_sheet,delta_camx,delta_camy,x,y,keys,wasd):
     global sprite_sheet3,projectiles
-    # most meaning of this func is to draw correctly all the entities on client
-    # and to hand over all the interactions with them to the host
     print(entities,len(entities))
     for i in range(0,len(entities),1):
-        # state the vars
         cur = entities[i]
         print(cur,len(entities),i)
         type = cur[0]
@@ -413,7 +450,6 @@ def entities_onclient(entities,screen,scale,sprite_sheet,delta_camx,delta_camy,x
             moving = True
         print(cur[1],cur[2],"sigma",tar)
         if hp>0:
-            # visual hp bar
             rect = pygame.Rect(Px - 8 * scale, Py - 80, round(hp), 15)
             pygame.draw.rect(screen, (200, 50, 50), rect)
 

@@ -1,11 +1,15 @@
 import socket
 import time
 from test import Client_decode
-from Try_a_level import fill_entities,entities_itself,Loot_chest
+from Try_a_level import fill_entities,entities_itself,Loot_chest,Set_start_pos
 from Player import projectile
 import pygame.time
 import random
 from Items import identify_item,Drop_random
+from Level_prefabs import Possible_levels
+random_level = random.randint(0,len(Possible_levels)-1)
+Travel = [Possible_levels[random_level] for _ in range(10)]
+
 clock = pygame.time.Clock()
 FPS = 100
 
@@ -26,10 +30,17 @@ projecyiles = []
 fill_entities(1,entities)
 projectiles = [[0,0,0,0,2000,2000,"fireball"]]
 stage = 0
+current_level_index = Possible_levels.index(Travel[stage])
+
 Next = False
 k_e = False
 Pos_data = [0,0]
 while True:
+    start_pos = Set_start_pos(stage, [300, 300],Travel)
+
+    # print(positions)
+
+    pass
     # проверим есть ли желающие
     try:
         new_socket,addres = main_socket.accept()
@@ -39,7 +50,8 @@ while True:
         new_socket.setblocking(0)
         players_sockets.append(new_socket)
         new_socket.send(str(players_sockets.index(new_socket)).encode())
-        positions.append([ 300,300,'walk',2,100,0,0 ])
+        positions.append([start_pos[0],start_pos[1],'walk',2,100,0,0 ])
+        print("один",start_pos,stage)
     except:
         # print('Нет желающих')
         pass
@@ -80,6 +92,7 @@ while True:
                 if entities[i][9]>0:
                     if entities[i][1] in range(attack_area[0]-100,attack_area[0]+100) and entities[i][2] in range(attack_area[1]-100,attack_area[1]+100) and Infos == "True":
                         entities[i][9]-=int(Damage)
+                        #    projectiles.append([entities[i][1],entities[i][2],entities[i][1],entities[i][2],entities[i][1],entities[i][2]-200,5])
                         if entities[i][9]<=0:
                             ch = random.randint(0,10)
                             if ch in range(0,2):
@@ -125,23 +138,30 @@ while True:
 
         if entities[i][9]>0:
             done = False
-    if Next == True and done == True:
+    if Next == True and done == True and len(positions)>0:
         stage += 1
         entities.clear()
+        start_pos = Set_start_pos(stage, start_pos)
+
         fill_entities(stage+1, entities)
+        for i in range(0,len(positions)):
+            positions[i][0],positions[i][1] = start_pos[0],start_pos[1]
+            print(positions[i][0],positions[i][1])
     for sock in players_sockets:
         try:
             pos = str(str(positions[players_sockets.index(sock)][0])+" "+str(positions[players_sockets.index(sock)][1])+" ")
             # print((str(data_poses)+"!ENT:"+data_entities+str(players_sockets.index(sock))+"!PROJ:"+"!ITEMS"))
             # sock.send((str(data_poses)+"&"+data_entities+str(players_sockets.index(sock))).encode())
             # sock.send("попка".encode())
-            sock.sendall(str(str(data_poses)+"!ENT:"+str(data_entities)+"!PROJ:"+str(data_projectiles)+"!ITEMS:"+" "+"!QUEUE:"+str(players_sockets.index(sock))+"!NEXT:"+str(Next)+"!STAGE:"+str(stage)+" ").encode())
+            sock.sendall(str(str(data_poses)+"!ENT:"+str(data_entities)+"!PROJ:"+str(data_projectiles)+"!ITEMS:"+" "+"!QUEUE:"+str(players_sockets.index(sock))+"!NEXT:"+str(Next)+"!STAGE:"+str(stage)+" "+str(current_level_index)+" ").encode())
             # sock.send(str(len((str(data_poses)+"&"+data_entities+str(players_sockets.index(sock)))).encode()))
             # sock.send(data_entities.encode())
             # print(data_poses)
 
             for i in range(0, len(entities)):
                 step = [0,0]
+                print(positions[0][0], positions[0][1])
+
                 print(Pos_data,"koma")
                 step[0],step[1],best,entities[i][6],entities[i][7],entities[i][8],projectiles,entities[i][9]= entities_itself(entities, positions[players_sockets.index(sock)][0],
                                 positions[players_sockets.index(sock)][1],i,k_e,projectiles,(int(Pos_data[0]),int(Pos_data[1])))

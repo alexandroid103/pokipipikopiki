@@ -2,7 +2,7 @@ import pygame
 import sys
 import socket
 import pyperclip
-from Player import Control,Draw_Person,Draw_cursor,Draw_weapon,Make_a_hit,camera_group,Draw_weapon_packed,projectile,draw_projectile
+from Player import Control,Draw_Person,Draw_cursor,Draw_weapon,Make_a_hit,Draw_weapon_packed,projectile,draw_projectile
 from Try_a_level import Draw_a_level,entities_onclient,Check_Collisions,projectiles
 from test import Decode_Data
 from Items import Draw_inventory
@@ -116,10 +116,11 @@ while True:
         data = data.decode()
         print("skibidi",data)
         try:
-            Players,Entities,Queue,Next,stage,Projectiles = Decode_Data(data)
+            Players,Entities,Queue,Next,stage,Projectiles,Current_level = Decode_Data(data)
             delta_camx -= int(pos.split(" ")[0])
             delta_camy -= int(pos.split(" ")[1])
-        except:pass
+
+        except ZeroDivisionError as e:print(e)
         # data1 =sock.recv
         # data1 = data1.decode()
         done = True
@@ -130,9 +131,9 @@ while True:
         #     print("ДА")
         #     stage+=1
         # Next = "False"
-        wasd = Check_Collisions(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300,Entities)
+        wasd = Check_Collisions(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300,Entities,Current_level)
 
-        Ready = Draw_a_level(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300, wasd,done,stage)
+        Ready = Draw_a_level(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300, wasd,done,stage,Current_level)
 
 
         for i in range(0,len(Players)):

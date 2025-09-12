@@ -47,6 +47,7 @@ def projectile(screen,projectiles,delta_camx,delta_camy):
         except:pass
     print("kaif",len(projectiles))
 def draw_projectile(screen,projectiles,delta_camx,delta_camy):
+    global font
     for i in range(0,len(projectiles)):
         try:
             self_pos = projectiles[i][0], projectiles[i][1]
@@ -55,16 +56,18 @@ def draw_projectile(screen,projectiles,delta_camx,delta_camy):
             x_dist = end_pos[0] - start_pos[0]
             y_dist = end_pos[1] - start_pos[1]
             angle = math.degrees(math.atan2(y_dist, x_dist))
-            sprite = pygame.transform.rotate(projectile_identify("fireball")[0], int(angle))
+            proj = projectile_identify(projectiles[i][6])
+            sprite = pygame.transform.rotate(proj[0], int(angle))
+
 
             turret = sprite.get_rect(center=(self_pos[0] + (5 * scale)+delta_camx, self_pos[1] + (15 * scale)+delta_camy))
             screen.blit(sprite, turret)
         except:pass
-def projectile_identify(type):
+def projectile_identify(typse):
     # just identify the projectile`s behaivor connected to whats projectile type is it.
     global fireball
     result = fireball, 5
-    if type=="fireball":
+    if typse=="fireball":
         result = fireball,5,1000
     return result
 def Control(keys, wasd, speed):

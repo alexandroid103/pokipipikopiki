@@ -13,7 +13,9 @@ def Decode_Data(Data):
         Next_data = Data[Data.find("!NEXT:"):Data.find("!STAGE:")].replace("!NEXT:", "")
         Stage_data = Data[Data.find("!STAGE:"):len(Data)].replace("!STAGE:", "")
         Stage_data = Stage_data.split(" ")
-        Stage_data = Stage_data[0]
+        print(Stage_data[1])
+        Stage = Stage_data[0]
+        Current = Stage_data[1]
         Players = []
         Players_data = Players_data.split(" ")
         for i in range(1,len(Players_data),7):
@@ -37,7 +39,7 @@ def Decode_Data(Data):
                 Projectiles.append([float(Projectiles_data[i]),float(Projectiles_data[i+1]),int(Projectiles_data[i+2]),int(Projectiles_data[i+3]),int(Projectiles_data[i+4]),int(Projectiles_data[i+5]),str(Projectiles_data[i+6]),str(Projectiles_data[i+7])])
             except:pass
         print("gav",Projectiles)
-        return Players,Entities,int(Queue_data),Next_data,Stage_data,Projectiles
+        return Players,Entities,int(Queue_data),Next_data,Stage,Projectiles,Current
 def Client_decode(Data):
     # This func just decode and sort data that come to host from client.
     Pos_data = Data[Data.find("!POS:"):Data.find(" !MOUSE:")].replace("!POS:","")
