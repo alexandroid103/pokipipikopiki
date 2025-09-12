@@ -7,7 +7,7 @@ from Try_a_level import Draw_a_level,entities_onclient,Check_Collisions,projecti
 from test import Decode_Data
 from Items import Draw_inventory
 from Animation import character_run_animation
-from Menu import menu, Pause_menu, Create_save, ip_input
+from Menu import menu, Pause_menu, Create_save, ip_input,Player_hpbar
 import time
 
 pygame.init()
@@ -45,6 +45,7 @@ scene = "menu"
 pause = False
 connection = False
 last_data = 0
+Health = 100
 while True:
     k_e = False
     screen.fill(background_color)
@@ -179,6 +180,6 @@ while True:
             Pause_menu(screen,cursor,lmb)
         print("pgr",Projectiles)
         draw_projectile(screen,Projectiles,delta_camx,delta_camy)
-
+        Player_hpbar(screen,Health)
         Draw_cursor(sprite_sheet, screen, scale, cursor[0], cursor[1])
     pygame.display.flip()

@@ -8,7 +8,7 @@ import random
 from Items import identify_item,Drop_random
 from Level_prefabs import Possible_levels
 random_level = random.randint(0,len(Possible_levels)-1)
-Travel = [Possible_levels[random_level] for _ in range(10)]
+Travel = [Possible_levels[random.randint(0,len(Possible_levels)-1)] for _ in range(10)]
 
 clock = pygame.time.Clock()
 FPS = 100
@@ -141,7 +141,7 @@ while True:
     if Next == True and done == True and len(positions)>0:
         stage += 1
         entities.clear()
-        start_pos = Set_start_pos(stage, start_pos)
+        start_pos = Set_start_pos(stage, start_pos,Travel)
 
         fill_entities(stage+1, entities)
         for i in range(0,len(positions)):

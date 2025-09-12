@@ -4,12 +4,13 @@ from Items import identify_item,inventory
 from Level_prefabs import level1,level0,Level_signs,Possible_levels
 import pygame
 from Animation import shine_animation,Item_column_animation,living_armor_run_animation,living_armor_idle_animation,wizzard_run_animation,wizzard_attack_animation
-
+from Menu import hp_bar,font
 scale = 4
 projectiles = [[0,0,0,0,2000,2000,"fireball"]]
 sprite_sheet2 = pygame.transform.scale(pygame.image.load("new idea.png"),(pygame.image.load("new idea.png").get_width()*2,pygame.image.load("new idea.png").get_height()*2))
 transparent_spritesheet = pygame.transform.scale(pygame.image.load("new idea.png"),(pygame.image.load("new idea.png").get_width()*scale,pygame.image.load("new idea.png").get_height()*scale))
 transparent_spritesheet.set_alpha(100)
+
 sprite_sheet3 = pygame.transform.scale(pygame.image.load("another idea.png"),(pygame.image.load("another idea.png").get_width()*scale,pygame.image.load("another idea.png").get_height()*scale))
 
 level = ['vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'
@@ -434,7 +435,7 @@ def Chest_onclient(Px, Py,x,y, screen, sprite_sheet,condition,k_e,name,timer,las
 
 
 def entities_onclient(entities,screen,scale,sprite_sheet,delta_camx,delta_camy,x,y,keys,wasd):
-    global sprite_sheet3,projectiles
+    global sprite_sheet3,projectiles,font
     print(entities,len(entities))
     for i in range(0,len(entities),1):
         cur = entities[i]
@@ -450,9 +451,11 @@ def entities_onclient(entities,screen,scale,sprite_sheet,delta_camx,delta_camy,x
             moving = True
         print(cur[1],cur[2],"sigma",tar)
         if hp>0:
-            rect = pygame.Rect(Px - 8 * scale, Py - 80, round(hp), 15)
+            rect = pygame.Rect(Px - 8 * scale, Py - 80, round(hp), 16)
             pygame.draw.rect(screen, (200, 50, 50), rect)
-
+            screen.blit(hp_bar,(Px - 8 * scale, Py - 84))
+            text = font.render(str(round(hp)), 1, (0,0,0))
+            screen.blit(text, (Px - 8 * scale, Py - 100))
             if type == "wizzard":
                 if moving == True and not (x in range(Px-200,Px+200) and y in range(Py-200,Py+200)):
                     wizzard_run_animation(screen,(Px - 8 * scale, Py - 10 * scale))

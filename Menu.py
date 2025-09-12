@@ -19,8 +19,13 @@ exit = interface.subsurface((48*scale,80*scale,16*scale,16*scale))
 settings = interface.subsurface((16*scale,96*scale,16*scale,16*scale))
 bestiary = interface.subsurface((0*scale,96*scale,16*scale,16*scale))
 none = interface.subsurface((0*scale,160*scale,16*scale,16*scale))
+
+hp_bar = interface.subsurface((16*scale,0*scale,25*scale,6*scale))
 ip_input = '26.247.173.52'
 # deafault button func
+def Player_hpbar(screen,Health):
+    text = font.render(str(Health),1,(255,255,255))
+    screen.blit(text,(0,0))
 def Button(screen,pos,icon,text,mouse_pos,lmb):
     global button,scale
     # draw button itself and text than

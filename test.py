@@ -13,7 +13,6 @@ def Decode_Data(Data):
         Next_data = Data[Data.find("!NEXT:"):Data.find("!STAGE:")].replace("!NEXT:", "")
         Stage_data = Data[Data.find("!STAGE:"):len(Data)].replace("!STAGE:", "")
         Stage_data = Stage_data.split(" ")
-        print(Stage_data[1])
         Stage = Stage_data[0]
         Current = Stage_data[1]
         Players = []
