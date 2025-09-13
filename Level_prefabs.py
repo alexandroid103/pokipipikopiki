@@ -166,7 +166,7 @@ level5 = [  'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv',
             'vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'
           ]
 
-Possible_levels = [level5,level1,level2,level3,level4,level5]
+Possible_levels = [level2,level2,level2,level2,level2,level2]
 Level_signs = ['0','1','2','3','4','5']
 def random_travel():
     global Travel

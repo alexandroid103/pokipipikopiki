@@ -162,9 +162,9 @@ while True:
                 step = [0,0]
                 print(positions[0][0], positions[0][1])
 
-                print(Pos_data,"koma")
-                step[0],step[1],best,entities[i][6],entities[i][7],entities[i][8],projectiles,entities[i][9]= entities_itself(entities, positions[players_sockets.index(sock)][0],
-                                positions[players_sockets.index(sock)][1],i,k_e,projectiles,(int(Pos_data[0]),int(Pos_data[1])))
+                print(entities[i][10],"koma")
+                step[0],step[1],best,entities[i][6],entities[i][7],entities[i][8],projectiles,entities[i][9],entities[i][10] = entities_itself(entities, positions[players_sockets.index(sock)][0],
+                                positions[players_sockets.index(sock)][1],i,k_e,projectiles,(int(Pos_data[0]),int(Pos_data[1])),current_level_index,entities[i][10])
 
                 entities[i][1]+=step[0]
                 entities[i][2]+=step[1]

@@ -133,7 +133,7 @@ while True:
         #     stage+=1
         # Next = "False"
         wasd = Check_Collisions(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300,Entities,Current_level)
-
+        wasd = [True,True,True,True]
         Ready = Draw_a_level(screen, sprite_sheet, scale, delta_camx, delta_camy, 300, 300, wasd,done,stage,Current_level)
 
 

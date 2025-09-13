@@ -5,6 +5,7 @@ from Level_prefabs import level1,level0,Level_signs,Possible_levels
 import pygame
 from Animation import shine_animation,Item_column_animation,living_armor_run_animation,living_armor_idle_animation,wizzard_run_animation,wizzard_attack_animation
 from Menu import hp_bar,font
+
 scale = 4
 projectiles = [[0,0,0,0,2000,2000,"fireball"]]
 sprite_sheet2 = pygame.transform.scale(pygame.image.load("new idea.png"),(pygame.image.load("new idea.png").get_width()*2,pygame.image.load("new idea.png").get_height()*2))
@@ -175,8 +176,11 @@ def Draw_a_level(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,wasd,done,s
                     pass
     return Ready
 def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entities,current):
+    print("pop",Level_signs.index(str(current)))
     global level,transparent_spritesheet
     # This function is responsible for determining collisions of various objects(as casual walls and movestones)
+    level = Possible_levels[Level_signs.index(str(current))]
+    print("popiki",level)
     x = x+8*scale
     y = y+16*scale
     revealed = False
@@ -185,6 +189,8 @@ def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entitie
         for n in range(0,len(level[i])):
             if n*16*scale+delta_camx in range(-100,600) and i*16*scale+delta_camy in range(-100,600):
                 if level[i][n] == '5' or level[i][n] == 'v' or level[i][n] == '8':
+                    if level[i][n] == '5':
+                        print(x,y,n*16,i*16)
                     wasd[0] =wasd[0] and  Bottom_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
                     wasd[1] = wasd[1] and Right_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
                     wasd[2] = wasd[2] and Top_collision(x,y,n*16*scale+delta_camx,i*16*scale+delta_camy,16*scale,16*scale)
@@ -236,7 +242,6 @@ def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entitie
                     if blue_left == False:
                         level[i] = str(level[i][:n]) + '1' + str(level[i][n + 1:])
 
-
                 # if level[i][n] == '6':
                 #     screen.blit(sprite_sheet, (n * 16 * scale + delta_camx, i * 16 * scale + delta_camy),
                 #                 [16 * scale, 0, 16 * scale, 16 * scale])
@@ -245,17 +250,44 @@ def Check_Collisions(screen,sprite_sheet,scale,delta_camx,delta_camy,x,y,entitie
                 #     screen.blit(sprite_sheet, (n * 16 * scale + delta_camx, i * 16 * scale + delta_camy),
                 #                 [16 * scale, 0, 16 * scale, 16 * scale])
                 #     screen.blit(sprite_sheet,(n*16*scale+delta_camx,i*16*scale+delta_camy-16*scale),[16*scale,96*scale,16*scale,32*scale])
+    print('btw',wasd,(x,y))
+    return wasd
+def Check_entities_collision(x,y,current):
+    print("pop", Level_signs.index(str(current)))
+    global level, transparent_spritesheet
+    # This function is responsible for determining collisions of various objects(as casual walls and movestones)
+    level = Possible_levels[Level_signs.index(str(current))]
+    delta_camx = 0
+    delta_camy =0
+    print("popiki", level)
+    x = x + 8 * scale
+    y = y + 16 * scale
+    revealed = False
+    wasd = [True, True, True, True]
+    for i in range(0, len(level)):
+        for n in range(0, len(level[i])):
+            if n * 16 * scale + delta_camx in range(x-200, x+200) and i * 16 * scale + delta_camy in range(y-200, y+200):
+                if level[i][n] == '5' or level[i][n] == 'v' or level[i][n] == '8':
+                    if level[i][n] == '5':
+                        print(x, y, n * 16, i * 16)
+                    wasd[0] = wasd[0] and Bottom_collision(x, y, n * 16 * scale + delta_camx,
+                                                           i * 16 * scale + delta_camy, 16 * scale, 16 * scale)
+                    wasd[1] = wasd[1] and Right_collision(x, y, n * 16 * scale + delta_camx,
+                                                          i * 16 * scale + delta_camy, 16 * scale, 16 * scale)
+                    wasd[2] = wasd[2] and Top_collision(x, y, n * 16 * scale + delta_camx, i * 16 * scale + delta_camy,
+                                                        16 * scale, 16 * scale)
+                    wasd[3] = wasd[3] and Left_collision(x, y, n * 16 * scale + delta_camx, i * 16 * scale + delta_camy,
+                                                         16 * scale, 16 * scale)
+
     return wasd
 def Set_start_pos(lvl,start_pos,Travel):
     global level
     level = Travel[int(lvl)]
     result = start_pos
     for i in range(0,len(level)):
-        print(level[i], lvl)
 
         for n in range(0,len(level[i])):
             if level[i][n] == "q":
-                print(n*16*scale,i*16*scale)
                 result = n*16*scale,i*16*scale
     return result
 def fill_entities(lvl,entities):
@@ -263,18 +295,18 @@ def fill_entities(lvl,entities):
     if lvl == 1:
 
         # entities.append(["wizzard",900,300,2,0,0,False,300,300,100])
-        entities.append(["movestone", 0, 0, 2, 0, 0, False, 300, 300, 0])
-        entities.append(["gem", 900, 500, 2, 0, 0, False, 300, 300, 100])
+        # entities.append(["movestone", 0, 0, 2, 0, 0, False, 300, 300, 0])
+        # entities.append(["gem", 900, 500, 2, 0, 0, False, 300, 300, 100])
         # entities.append(["ninja", 400, 900, 2, 0, 0, False, 300, 300, 100])
-        # entities.append(["living_armor", 900, 900, 2, 0, 0, False, 300, 300, 100])
+        entities.append(["living_armor", 900, 900, 2, 0, 0, False, 300, 300, 100,[True,True,True,False]])
 
 
     if lvl == 2:
         entities.append(["zombie",100,100,2,0,0,False,300,300,100])
-        entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100])
-        entities.append(["zombie", 900, 900, 2, 0, 0, False, 300, 300, 100])
-        entities.append(["zombie", 100, 900, 2, 0, 0, False, 300, 300, 100])
-        entities.append(["living_armor", 700, 700, 2, 0, 0, False, 300,300,100])
+        entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100,(True,True,True,True)])
+        entities.append(["zombie", 900, 900, 2, 0, 0, False, 300, 300, 100,(True,True,True,True)])
+        entities.append(["zombie", 100, 900, 2, 0, 0, False, 300, 300, 100,(True,True,True,True)])
+        entities.append(["living_armor", 700, 700, 2, 0, 0, False, 300,300,100,(True,True,True,True)])
     if lvl == 3:
         entities.append(["zombie",100,100,2,0,0,False,300,300,100])
         entities.append(["zombie", 900, 100, 2, 0, 0, False, 300, 300, 100])
@@ -332,21 +364,21 @@ def heal_aura(Px,Py,entities):
     # heals entities around
 
     return
-def meele(Px,Py,Tarx,Tary,speed):
+def meele(Px,Py,Tarx,Tary,speed,wasd):
     # Move pattern for a meele entities
-
     delta_x,delta_y = 0,0
-    if Px < Tarx:
+    if Px < Tarx and wasd[3] == True:
         delta_x+=speed
-    if Px > Tarx:
+    if Px > Tarx and wasd[1] == True:
         delta_x-=speed
-    if Py < Tary:
+    if Py < Tary and wasd[2] == True:
         delta_y+=speed
-    if Py > Tary:
+    if Py > Tary and wasd[0] == True:
         delta_y-=speed
     return [delta_x,delta_y]
 
-def entities_itself(entities,x,y,i,k_e,projectiles,step):
+def entities_itself(entities,x,y,i,k_e,projectiles,step,current,wasd):
+    global scale
     # this func is responsible for all the c
     cur = entities[i]
     type = cur[0]
@@ -356,6 +388,10 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
     best = 250
     hp = cur[9]
     target = [Px,Py]
+    # wasd = Check_Collisions('','',4,0,0,Px,Py,entities,current)
+    wasd = Check_entities_collision(Px,Py,current)
+    print(wasd)
+
     delta_Px, delta_Py = 0,0
     if x in range(Px-1000,Px+1000) and y in range(Py-1000,Py+1000):
         target = [x, y]
@@ -366,22 +402,22 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
             if len(projectiles) < 1 and (Px, Py) != (x, y):
                 projectiles.append(([Px, Py, Px, Py, x, y, "fireball"]))
             if not (x in range(Px-200,Px+200) and y in range(Py-200,Py+200)):
-                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1)
+                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1,wasd)
         if type == "ninja":
             if not (x in range(Px-150,Px+150) and y in range(Py-150,Py+150)):
-                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],3)
+                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],3,wasd)
         if type == "gem":
             if not (x in range(Px-100,Px+100) and y in range(Py-100,Py+100)):
-                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1)
+                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1,wasd)
         if type == "zombie":
-                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1)
+                delta_Px,delta_Py = meele(Px,Py,target[0],target[1],1,wasd)
 
         if type == "trader":
-            delta_Px,delta_Py = meele(Px, Py, target[0], target[1], 0)
+            delta_Px,delta_Py = meele(Px, Py, target[0], target[1], 0,wasd)
             if x in range(Px-400,Px+400) and y in range(Py-400,Py+400):
                 aggresive = True
         if type == "living_armor":
-            delta_Px,delta_Py = meele(Px,Py,target[0],target[1],2)
+            delta_Px,delta_Py = meele(Px,Py,target[0],target[1],2,wasd)
         for n in range(0, len(entities)):
             if entities[n][1] in range(Px - 100, Px + 100) and entities[n][2] in range(Py - 100, Py + 100) and \
                     entities[n][0] == "gem":
@@ -390,7 +426,7 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
                 else:
                     hp = 100
     else:
-        delta_Px,delta_Py = meele(Px,Py,target[0],target[1],0)
+        delta_Px,delta_Py = meele(Px,Py,target[0],target[1],0,wasd)
         if type == "movestone":
            delta_Px,delta_Py = move_the_stone(Px,Py,x,y,step,projectiles)
            for i in range(0, len(projectiles)):
@@ -399,7 +435,8 @@ def entities_itself(entities,x,y,i,k_e,projectiles,step):
         if type == "closed" or type == "opened" or type == "looted":
             Loot_chest(Px,Py,x,y,entities[i][0],k_e,entities[i][6])
     print("agressive:",aggresive)
-    return delta_Px,delta_Py,best,aggresive,target[0],target[1],projectiles,round(hp,1)
+
+    return delta_Px,delta_Py,best,aggresive,target[0],target[1],projectiles,round(hp,1),wasd
 def Loot_chest(Px,Py,x,y,condition,k_e,name):
     global scale,sprite_sheet2,inventory
     print(name,condition)
